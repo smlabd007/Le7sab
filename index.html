@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لحساب</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            direction: ltr;
+            text-align: right;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        select {
+            cursor: pointer;
+            text-align: right;
+            direction: rtl;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        .conditional-field {
+            display: none;
+            margin-right: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .conditional-field.show {
+            display: block;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 25px 0 15px 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-size: 16px;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .result-label {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .result-value {
+            color: #667eea;
+            font-weight: bold;
+            direction: ltr;
+        }
+        
+        .section-title {
+            background: #667eea;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 20px 0 10px 0;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .final-amount {
+            font-size: 18px;
+            color: #764ba2;
+        }
+        
+        .cost-detail {
+            font-size: 14px;
+            color: #666;
+            margin-right: 20px;
+        }
+        
+        .print-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+            display: none;
+        }
+        
+        .print-btn.show {
+            display: block;
+        }
+        
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .print-btn:active {
+            transform: translateY(0);
+        }
+        
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm;
+            }
+            
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            html, body {
+                width: 100%;
+                height: auto;
+                background: white !important;
+                margin: 0;
+                padding: 0;
+            }
+            
+            body {
+                display: block !important;
+            }
+            
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+                padding: 10px !important;
+                margin: 0 !important;
+                border: 2px solid #667eea !important;
+                border-radius: 0 !important;
+                background: white !important;
+                page-break-inside: auto !important;
+            }
+            
+            /* إخفاء النموذج */
+            form,
+            .section-header,
+            .calculate-btn,
+            .print-btn,
+            .checkbox-group,
+            .conditional-field {
+                display: none !important;
+            }
+            
+            /* العنوان */
+            h1 {
+                display: block !important;
+                color: #667eea !important;
+                text-align: center !important;
+                font-size: 20px !important;
+                margin: 0 0 8px 0 !important;
+                padding: 0 0 6px 0 !important;
+                border-bottom: 2px solid #667eea !important;
+                page-break-after: avoid !important;
+                font-weight: bold !important;
+            }
+            
+            /* قسم النتائج */
+            .results {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+                margin: 10px 0 0 0 !important;
+                padding: 0 !important;
+                background: transparent !important;
+                overflow: visible !important;
+                page-break-inside: auto !important;
+            }
+            
+            /* تاريخ الطباعة */
+            #printDate {
+                display: block !important;
+                text-align: right !important;
+                font-size: 10px !important;
+                color: #666 !important;
+                margin: 0 0 6px 0 !important;
+                padding: 5px !important;
+                background: #f5f5f5 !important;
+                border-radius: 3px !important;
+                page-break-after: avoid !important;
+            }
+            
+            /* عناوين الأقسام */
+            .section-title {
+                display: block !important;
+                background: #667eea !important;
+                color: white !important;
+                padding: 7px 8px !important;
+                margin: 10px 0 5px 0 !important;
+                border-radius: 4px !important;
+                font-size: 13px !important;
+                font-weight: bold !important;
+                text-align: center !important;
+                page-break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            
+            /* بنود النتائج */
+            .result-item {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 6px 3px !important;
+                margin: 0 !important;
+                border-bottom: 1px solid #ddd !important;
+                font-size: 12px !important;
+                page-break-inside: avoid !important;
+            }
+            
+            .result-item:last-child {
+                border-bottom: none !important;
+            }
+            
+            .result-label {
+                display: inline-block !important;
+                color: #333 !important;
+                font-weight: 600 !important;
+                font-size: 12px !important;
+            }
+            
+            .result-value {
+                display: inline-block !important;
+                color: #667eea !important;
+                font-weight: bold !important;
+                font-size: 13px !important;
+            }
+            
+            /* المربعات المميزة */
+            .highlight {
+                display: flex !important;
+                background: #f0f4ff !important;
+                padding: 7px 6px !important;
+                margin: 3px 0 !important;
+                border: 2px solid #667eea !important;
+                border-radius: 4px !important;
+                page-break-inside: avoid !important;
+            }
+            
+            .highlight .result-label {
+                color: #764ba2 !important;
+                font-size: 13px !important;
+            }
+            
+            .highlight .result-value {
+                color: #764ba2 !important;
+                font-size: 15px !important;
+            }
+            
+            .final-amount {
+                font-size: 15px !important;
+                color: #764ba2 !important;
+                font-weight: 900 !important;
+            }
+            
+            /* تفاصيل التكاليف */
+            #costDetails {
+                display: block !important;
+                width: 100% !important;
+                padding: 6px !important;
+                margin: 3px 0 !important;
+                border: 1px dashed #ccc !important;
+                border-radius: 3px !important;
+                background: #fafafa !important;
+                page-break-inside: auto !important;
+            }
+            
+            .cost-detail {
+                display: block !important;
+                font-size: 10px !important;
+                color: #666 !important;
+                margin: 1px 0 4px 12px !important;
+                font-style: italic !important;
+            }
+            
+            /* نسخة العامل */
+            #workerIndividualShare {
+                color: #28a745 !important;
+                font-size: 14px !important;
+            }
+            
+            /* السماح بالاستمرار في صفحة جديدة */
+            .section-title:nth-of-type(3) {
+                page-break-before: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>لحساب</h1>
+        
+        <form id="calculatorForm">
+            <div class="section-header">📊 البيانات الأساسية</div>
+            
+            <div class="input-group">
+                <label for="weight">⚖️ الوزن (بالغرام)</label>
+                <input type="number" id="weight" step="0.01" required placeholder="أدخل الوزن">
+            </div>
+            
+            <div class="input-group">
+                <label for="pricePerGram">💰 سعر الغرام</label>
+                <input type="number" id="pricePerGram" step="0.01" required placeholder="أدخل سعر الغرام">
+            </div>
+            
+            <div class="input-group">
+                <label for="numKhanshat">📦 عدد الخنشات</label>
+                <input type="number" id="numKhanshat" step="1" min="0" required placeholder="أدخل عدد الخنشات">
+            </div>
+            
+            <div class="section-header">💸 التكاليف</div>
+            
+            <!-- النقل -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="hasTransport">
+                <label for="hasTransport">🚚 النقل</label>
+            </div>
+            
+            <div id="transportFields" class="conditional-field">
+                <div class="input-group">
+                    <label for="transportPricePerKhansha">سعر نقل الخنشة الواحدة</label>
+                    <input type="number" id="transportPricePerKhansha" step="0.01" min="0" placeholder="أدخل سعر نقل الخنشة">
+                </div>
+            </div>
+            
+            <!-- التصفية -->
+            <div style="margin-top: 15px; padding: 12px; background: #f0f0f0; border-radius: 8px;">
+                <label style="color: #667eea; font-weight: bold;">🔬 التصفية</label>
+                <p style="margin: 8px 0 0 0; color: #666; font-size: 14px;">يتم حسابها تلقائياً: الوزن × 1000</p>
+            </div>
+            
+            <!-- الطحن -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="hasGrinding">
+                <label for="hasGrinding">⚙️ الطحن</label>
+            </div>
+            
+            <div class="section-header">📈 نسب التوزيع</div>
+            
+            <div class="input-group">
+                <label for="workersPercentage">👷 نسبة العمال (%)</label>
+                <input type="number" id="workersPercentage" step="0.01" min="0" max="100" required placeholder="أدخل نسبة العمال">
+            </div>
+            
+            <div class="input-group">
+                <label for="numWorkers">👥 عدد العمال</label>
+                <input type="number" id="numWorkers" step="1" min="1" required placeholder="أدخل عدد العمال">
+            </div>
+            
+            <div class="input-group">
+                <label for="accountantPercentage">🧮 نسبة الحاسي (%)</label>
+                <input type="number" id="accountantPercentage" step="0.01" min="0" max="100" required placeholder="أدخل نسبة الحاسي">
+            </div>
+            
+            <button type="submit" class="calculate-btn">احسب النتائج</button>
+        </form>
+        
+        <div id="results" class="results">
+            <div id="printDate" style="display: none; text-align: right; font-size: 14px; color: #666; margin-bottom: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px;"></div>
+            
+            <div class="section-title">📊 النتائج الأساسية</div>
+            <div class="result-item">
+                <span class="result-label">المبلغ الإجمالي</span>
+                <span class="result-value" id="totalPrice">0</span>
+            </div>
+            
+            <div class="section-title">💸 تفاصيل التكاليف</div>
+            <div id="costDetails"></div>
+            <div class="result-item highlight">
+                <span class="result-label">إجمالي التكاليف</span>
+                <span class="result-value final-amount" id="totalCosts">0</span>
+            </div>
+            
+            <div class="result-item highlight">
+                <span class="result-label">المبلغ الإجمالي بعد التكاليف</span>
+                <span class="result-value final-amount" id="totalAfterCosts">0</span>
+            </div>
+            
+            <div class="section-title">👥 توزيع الحصص</div>
+            <div class="result-item">
+                <span class="result-label" id="workersLabel">نسبة العمال</span>
+                <span class="result-value" id="workersShare">0</span>
+            </div>
+            <div class="result-item" style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-right: 20px;">
+                <span class="result-label" id="workerIndividualLabel">نصيب كل عامل</span>
+                <span class="result-value" id="workerIndividualShare" style="color: #28a745;">0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label" id="accountantLabel">نسبة الحاسي</span>
+                <span class="result-value" id="accountantShare">0</span>
+            </div>
+            <div class="result-item highlight">
+                <span class="result-label" id="contractorLabel">نسبة المقاول (الباقي)</span>
+                <span class="result-value final-amount" id="contractorShare">0</span>
+            </div>
+        </div>
+        
+        <button id="printBtn" class="print-btn">🖨️ طباعة / حفظ كـ PDF</button>
+    </div>
+    
+    <script>
+        // إظهار/إخفاء حقول النقل
+        document.getElementById('hasTransport').addEventListener('change', function() {
+            const transportFields = document.getElementById('transportFields');
+            if (this.checked) {
+                transportFields.classList.add('show');
+                document.getElementById('transportPricePerKhansha').required = true;
+            } else {
+                transportFields.classList.remove('show');
+                document.getElementById('transportPricePerKhansha').required = false;
+                document.getElementById('transportPricePerKhansha').value = '';
+            }
+        });
+        
+        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // الحصول على القيم المدخلة
+            const weight = parseFloat(document.getElementById('weight').value);
+            const pricePerGram = parseFloat(document.getElementById('pricePerGram').value);
+            const numKhanshat = parseInt(document.getElementById('numKhanshat').value);
+            const workersPercentage = parseFloat(document.getElementById('workersPercentage').value);
+            const numWorkers = parseInt(document.getElementById('numWorkers').value);
+            const accountantPercentage = parseFloat(document.getElementById('accountantPercentage').value);
+            
+            // التحقق من صحة المدخلات
+            if (isNaN(weight) || isNaN(pricePerGram) || isNaN(numKhanshat) || 
+                isNaN(workersPercentage) || isNaN(numWorkers) || isNaN(accountantPercentage)) {
+                alert('الرجاء إدخال قيم صحيحة في جميع الحقول');
+                return;
+            }
+            
+            // التحقق من عدد العمال
+            if (numWorkers < 1) {
+                alert('عدد العمال يجب أن يكون 1 على الأقل');
+                return;
+            }
+            
+            // التحقق من النسب المئوية
+            if (workersPercentage < 0 || workersPercentage > 100 || accountantPercentage < 0 || accountantPercentage > 100) {
+                alert('النسب المئوية يجب أن تكون بين 0 و 100');
+                return;
+            }
+            
+            if (workersPercentage + accountantPercentage > 100) {
+                alert('مجموع نسبة العمال والحاسي لا يمكن أن يتجاوز 100%');
+                return;
+            }
+            
+            // حساب التكاليف
+            let totalCosts = 0;
+            let costDetailsHTML = '';
+            
+            // النقل
+            let transportCost = 0;
+            if (document.getElementById('hasTransport').checked) {
+                const transportPricePerKhansha = parseFloat(document.getElementById('transportPricePerKhansha').value);
+                if (isNaN(transportPricePerKhansha)) {
+                    alert('الرجاء إدخال سعر نقل الخنشة');
+                    return;
+                }
+                transportCost = transportPricePerKhansha * numKhanshat;
+                totalCosts += transportCost;
+                costDetailsHTML += `
+                    <div class="result-item">
+                        <span class="result-label">🚚 النقل</span>
+                        <span class="result-value">${transportCost.toFixed(2)}</span>
+                    </div>
+                    <div class="cost-detail">= ${transportPricePerKhansha} × ${numKhanshat} خنشة</div>
+                `;
+            }
+            
+            // التصفية
+            const tasfiyaCost = weight * 1000;
+            totalCosts += tasfiyaCost;
+            costDetailsHTML += `
+                <div class="result-item">
+                    <span class="result-label">🔬 التصفية</span>
+                    <span class="result-value">${tasfiyaCost.toFixed(2)}</span>
+                </div>
+                <div class="cost-detail">= ${weight} غرام × 1000</div>
+            `;
+            
+            // الطحن
+            let grindingCost = 0;
+            if (document.getElementById('hasGrinding').checked) {
+                grindingCost = numKhanshat * 1000;
+                totalCosts += grindingCost;
+                costDetailsHTML += `
+                    <div class="result-item">
+                        <span class="result-label">⚙️ الطحن</span>
+                        <span class="result-value">${grindingCost.toFixed(2)}</span>
+                    </div>
+                    <div class="cost-detail">= ${numKhanshat} خنشة × 1000</div>
+                `;
+            }
+            
+            // الحسابات
+            const totalPrice = weight * pricePerGram;
+            const totalAfterCosts = totalPrice - totalCosts;
+            const workersShare = totalAfterCosts * (workersPercentage / 100);
+            const workerIndividualShare = workersShare / numWorkers;
+            const accountantShare = totalAfterCosts * (accountantPercentage / 100);
+            const contractorShare = totalAfterCosts - workersShare - accountantShare;
+            const contractorPercentage = 100 - workersPercentage - accountantPercentage;
+            
+            // عرض النتائج
+            document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
+            document.getElementById('costDetails').innerHTML = costDetailsHTML;
+            document.getElementById('totalCosts').textContent = totalCosts.toFixed(2);
+            document.getElementById('totalAfterCosts').textContent = totalAfterCosts.toFixed(2);
+            document.getElementById('workersLabel').textContent = `نسبة العمال (${workersPercentage}%) - ${numWorkers} عامل`;
+            document.getElementById('workersShare').textContent = workersShare.toFixed(2);
+            document.getElementById('workerIndividualLabel').textContent = `نصيب كل عامل (÷ ${numWorkers})`;
+            document.getElementById('workerIndividualShare').textContent = workerIndividualShare.toFixed(2);
+            document.getElementById('accountantLabel').textContent = `نسبة الحاسي (${accountantPercentage}%)`;
+            document.getElementById('accountantShare').textContent = accountantShare.toFixed(2);
+            document.getElementById('contractorLabel').textContent = `نسبة المقاول (${contractorPercentage.toFixed(2)}%)`;
+            document.getElementById('contractorShare').textContent = contractorShare.toFixed(2);
+            
+            // إظهار قسم النتائج
+            document.getElementById('results').classList.add('show');
+            document.getElementById('printBtn').classList.add('show');
+            
+            // التمرير إلى النتائج
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        
+        // زر الطباعة
+        document.getElementById('printBtn').addEventListener('click', function() {
+            // إضافة تاريخ الطباعة
+            const now = new Date();
+            const printDate = now.toLocaleDateString('ar-SA', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            const printDateElement = document.getElementById('printDate');
+            printDateElement.textContent = 'تاريخ الطباعة: ' + printDate;
+            printDateElement.style.display = 'block';
+            
+            // الطباعة
+            setTimeout(function() {
+                window.print();
+            }, 200);
+        });
+        
+        // مسح النتائج عند تغيير أي حقل إدخال
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', function() {
+                document.getElementById('results').classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>
